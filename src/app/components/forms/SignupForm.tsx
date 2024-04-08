@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useFormState } from "react-dom";
+import { StrapiErrors } from "../custom/StrapiErrors";
 
 import {
   CardTitle,
@@ -10,17 +12,27 @@ import {
   CardFooter,
   Card,
 } from "@/components/ui/card";
-
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { registerUserAction } from "@/app/data/actions/auth-actions";
+import { ZodErrors } from "@/app/components/custom/ZodErrors";
+import { SubmitButton } from "../custom/SubmitButton";
 
+const INITIAL_STATE = {
+    data: null,
+};
 export function SignupForm() {
+
+    const [formState, formAction] = useFormState(registerUserAction, INITIAL_STATE);
+
+    console.log(formState);
+     
     return (
         <div className="w-full max-w-md">
-            <form>
+            <form action={formAction}>
                 <Card>
                     <CardHeader className="space-y-1">
-                        <CardTitle className="text-3xl font-bold">Sign Up</CardTitle>
+                        <CardTitle className="text-3xl font-bold">Sign  Up</CardTitle>
                         <CardDescription>Enter your details to create a new account.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -32,6 +44,7 @@ export function SignupForm() {
                               name="username"
                               placeholder="username" 
                             />
+                           <ZodErrors error={formState?.zodErrors?.username} />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="email">Email</Label>
@@ -41,6 +54,7 @@ export function SignupForm() {
                               name="email"
                               placeholder="name@gmail.com" 
                             />
+                            <ZodErrors error={formState?.zodErrors?.email} />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="password">Password</Label>
@@ -50,10 +64,12 @@ export function SignupForm() {
                               name="password"
                               placeholder="password" 
                             />
+                            <ZodErrors error={formState?.zodErrors?.password} />
                         </div>
                     </CardContent>
-                    <CardFooter className="fex flex-col">
-                        <button className="w-full">Sign Up</button>
+                    <CardFooter className="flex flex-col">
+                        <SubmitButton className="w-full" text="Sign Up" loadingText="Loading" />
+                        <StrapiErrors error={formState?.strapiErrors} />
                     </CardFooter>
                 </Card>
                 <div className="mt-4 text-center text-sm">
